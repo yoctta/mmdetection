@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 import os
 from random import sample
-with open('/mnt/home/syn4det/GLIDE/LVIS_gen_FG/results.json') as f:
+with open('/mnt/home/syn4det/LVIS_gen_FG/results.json') as f:
     classes = json.load(f)
     classes= [i['name'] for i in classes]
 

@@ -77,8 +77,8 @@ class In_N_Out:
 
     def __call__(self,results):
         img=results['img']
-        bboxes=results['gt_bboxes']
-        labels=results['gt_labels']
+        bboxes=results['gt_bboxes'].tolist()
+        labels=results['gt_labels'].tolist()
         label_set=set(labels)
         assert len(labels)==len(bboxes)
         N = min(self.N,len(label_set))
@@ -87,4 +87,6 @@ class In_N_Out:
                 for _ in range(3):
                     if self.try_add_syn(img,bboxes,labels,i,self.care_overlap):
                         break
+        results['gt_bboxes']=np.array(bboxes)
+        results['gt_labels']=np.array(labels)
         return results

@@ -6,6 +6,7 @@ import json
 with open('/mnt/home/syn4det/GLIDE/LVIS_gen_FG/results.json') as f:
     classes = json.load(f)
     classes= [i['name'] for i in classes]
+
 data = dict(
     samples_per_gpu=2,
     workers_per_gpu=2,

@@ -7,9 +7,11 @@ from random import sample
 with open('/mnt/home/syn4det/GLIDE/LVIS_gen_FG/results.json') as f:
     classes = json.load(f)
     classes= [i['name'] for i in classes]
-cat2label = {cat_id: i for i, cat_id in enumerate(classes)}
-label2cat = {i:cat_id for i, cat_id in enumerate(classes)}
 
+with open('/mnt/data/LVIS/id_map.json') as f:
+    id_map_f=json.load(f)
+cat2label = {id_map_f[cat_id]: i for i, cat_id in enumerate(classes)}
+label2cat = {i:id_map_f[cat_id] for i, cat_id in enumerate(classes)}
 
 def intersection(s1,s2):
     area2=(s2[3]-s2[1])*(s2[2]-s2[0])

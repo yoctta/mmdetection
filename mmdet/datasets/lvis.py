@@ -1,5 +1,6 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 import itertools
+import json
 import logging
 import os.path as osp
 import tempfile
@@ -727,10 +728,13 @@ class LVISV1Dataset(LVISDataset):
                 'Package lvis is not installed. Please run "pip install git+https://github.com/lvis-dataset/lvis-api.git".'  # noqa: E501
             )
         self.coco = LVIS(ann_file)
-        self.cat_ids = self.coco.get_cat_ids()
-        print(self.cat_ids)
-        print("----------------------------")
-        print(self.CLASSES)
+        #self.cat_ids = self.coco.get_cat_ids()
+        with open('/mnt/data/LVIS/id_map.json') as f:
+            id_map_f=json.load(f)
+        self.cat_ids=[id_map_f[i] for i in self.CLASSES]
+        # print(self.cat_ids)
+        # print("----------------------------")
+        # print(self.CLASSES)
         self.cat2label = {cat_id: i for i, cat_id in enumerate(self.cat_ids)}
         self.img_ids = self.coco.get_img_ids()
         data_infos = []

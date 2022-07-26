@@ -72,7 +72,7 @@ class In_N_Out:
                     return 0
         labels.append(cls)
         bboxes.append([dx,dy,dx+pw,dy+ph])
-        img[dy:dy+ph,dx:dx+pw]=img[dy:dy+ph,dx:dx+pw]*(1-alpha)+RGB*alpha[...,None]
+        img[dy:dy+ph,dx:dx+pw]=img[dy:dy+ph,dx:dx+pw]*(1-alpha[...,None])+RGB*alpha[...,None]
         return 1 
 
     def __call__(self,results):

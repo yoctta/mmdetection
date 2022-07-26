@@ -51,7 +51,7 @@ class In_N_Out:
         img_h,img_w=img.shape[:2]
         if len(self.subs_dict[catego])==0:
             return 0
-        sub_img=sample(self.subs_dict[catego],1)
+        sub_img=sample(self.subs_dict[catego],1)[0]
         scales=[]
         for lab,bbox in zip(labels,bboxes):
             if lab==cls:

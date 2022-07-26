@@ -34,6 +34,7 @@ class In_N_Out:
         self.mask_threshold=mask_threshold
 
     def load_RGBA_BB(self,file_path,size):
+        print(file_path)
         img_RGBA=cv2.imread(file_path,cv2.IMREAD_UNCHANGED)
         alpha=img_RGBA[...,3:]
         RGB=img_RGBA[...,:3]

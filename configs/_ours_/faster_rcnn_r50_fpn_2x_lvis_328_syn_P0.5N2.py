@@ -30,11 +30,11 @@ class In_N_Out:
     def __init__(self,subs_file='/mnt/home/syn4det/LVIS_l20_328_s28_subs.json',P=0.5,N=1,scale_p=[0.2,2],care_overlap=True,mask_threshold=128):
         with open(subs_file) as f:
             self.subs_dict=json.load(f)        
-            self.P=P
-            self.N=N
-            self.scale_p=scale_p
-            self.care_overlap=care_overlap
-            self.mask_threshold=mask_threshold
+        self.P=P
+        self.N=N
+        self.scale_p=scale_p
+        self.care_overlap=care_overlap
+        self.mask_threshold=mask_threshold
 
 
     def load_RGBA_BB(self,file_path,size):
@@ -50,10 +50,36 @@ class In_N_Out:
         alpha=cv2.resize(alpha[y_min:y_max,x_min:x_max],(new_H,new_W))/255
         return RGB,alpha
 
+    def try_add_syn(self,img,bboxes,labels,cls,care_overlap):
+        catego=label2cat[cls]
+        img_h,img_w=img.shape[:2]
+        if len(self.subs_dict[catego])==0:
+            return 0
+        sub_img=sample(self.subs_dict[catego],1)
+        scales=[]
+        for lab,bbox in zip(labels,bboxes):
+            if lab==cls:
+                scales.append(max(bbox[3]-bbox[1],bbox[2]-bbox[0]))
+        scale=np.mean(scales)*np.random.uniform(*self.scale_p)
+        RGB,alpha=self.load_RGBA_BB(sub_img,scale)
+        ph,pw=RGB.shape[:2]
+        dy=img_h-ph
+        dx=img_w-pw
+        if dy<=0 or dx<=0:
+            return 0   
+        dy=np.random.randint(dy)
+        dx=np.random.randint(dx)
+        if care_overlap:
+            for bbox in bboxes:
+                if intersection([dx,dy,dx+pw,dy+ph],bbox)>0.2:
+                    return 0
+        labels.append(cls)
+        bboxes.append([dx,dy,dx+pw,dy+ph])
+        img[dy:dy+ph,dx:dx+pw]=img[dy:dy+ph,dx:dx+pw]*(1-alpha)+RGB*alpha
+        return 1 
 
     def __call__(self,results):
         img=results['img']
-        img_h,img_w=img.shape[:2]
         bboxes=results['gt_bboxes']
         labels=results['gt_labels']
         label_set=set(labels)
@@ -61,29 +87,9 @@ class In_N_Out:
         N = min(self.N,len(label_set))
         for i in sample(label_set,N):
             if np.random.rand()<=self.P:
-                catego=label2cat[i]
-                sub_img=sample(self.subs_dict[catego],1)
-                scales=[]
-                for lab,bbox in zip(labels,bboxes):
-                    if lab==i:
-                        scales.append(max(bbox[3]-bbox[1],bbox[2]-bbox[0]))
-                scale=np.mean(scales)*np.random.uniform(*self.scale_p)
-                RGB,alpha=self.load_RGBA_BB(sub_img,scale)
-                ph,pw=RGB.shape[:2]
-                dy=img_h-ph
-                dx=img_w-pw
-                if dy<=0 or dx<=0:
-                    continue
-                
-                dy=np.random.randint(dy)
-                dx=np.random.randint(dx)
-                if self.care_overlap:
-                    for bbox in bboxes:
-                        if intersection([dx,dy,dx+pw,dy+ph],bbox)>0.2:
-                            continue
-                labels.append(i)
-                bboxes.append([dx,dy,dx+pw,dy+ph])
-                img[dy:dy+ph,dx:dx+pw]=img[dy:dy+ph,dx:dx+pw]*(1-alpha)+RGB*alpha
+                for _ in range(3):
+                    if self.try_add_syn(img,bboxes,labels,i,self.care_overlap):
+                        break
         return results
 
 
@@ -100,7 +106,7 @@ img_norm_cfg = dict(
 train_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(type='LoadAnnotations', with_bbox=True, with_mask=False),
-    dict(type='In_N_Out',P=0.5,N=3),
+    dict(type='In_N_Out',P=0.5,N=2),
     dict(
         type='Resize',
         img_scale=[(1333, 640), (1333, 672), (1333, 704), (1333, 736),

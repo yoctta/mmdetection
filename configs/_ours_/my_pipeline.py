@@ -86,6 +86,6 @@ class In_N_Out:
                 for _ in range(3):
                     if self.try_add_syn(img,bboxes,labels,i,self.care_overlap):
                         break
-        results['gt_bboxes']=np.array(bboxes)
+        results['gt_bboxes']=np.array(bboxes,dtype='float32')
         results['gt_labels']=np.array(labels)
         return results

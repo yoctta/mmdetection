@@ -43,8 +43,8 @@ class In_N_Out:
         scale=size/max((y_max-y_min),(x_max-x_min))
         new_H=scale*(y_max-y_min)
         new_W=scale*(x_max-x_min)
-        RGB=cv2.resize(RGB[y_min:y_max,x_min:x_max],(new_H,new_W))
-        alpha=cv2.resize(alpha[y_min:y_max,x_min:x_max],(new_H,new_W))/255
+        RGB=cv2.resize(RGB[y_min:y_max,x_min:x_max],(round(new_H),round(new_W)))
+        alpha=cv2.resize(alpha[y_min:y_max,x_min:x_max],(round(new_H),round(new_W)))/255
         return RGB,alpha
 
     def try_add_syn(self,img,bboxes,labels,cls,care_overlap):

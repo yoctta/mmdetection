@@ -3,9 +3,8 @@ _base_ = '../_base_/datasets/coco_instance.py'
 dataset_type = 'LVISV1Dataset'
 data_root = '/mnt/data/LVIS'
 import json
-with open('/mnt/home/syn4det/GLIDE/LVIS_gen_FG/results.json') as f:
-    classes = json.load(f)
-    classes= [i['name'] for i in classes]
+classes = json.load(open('/mnt/home/syn4det/GLIDE/LVIS_gen_FG/results.json'))
+classes= [i['name'] for i in classes]
 
 data = dict(
     samples_per_gpu=2,

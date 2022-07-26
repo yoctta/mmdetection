@@ -1,5 +1,5 @@
 # dataset settings
-_base_ = 'coco_instance.py'
+_base_ = '../_base_/datasets/coco_instance.py'
 dataset_type = 'LVISV1Dataset'
 data_root = '/mnt/data/LVIS'
 import json

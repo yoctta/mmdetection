@@ -3,7 +3,7 @@ _base_ = [
     '../_ours_/lvis_v1_longtail_328.py',
     '../_base_/schedules/schedule_2x.py', '../_base_/default_runtime.py'
 ]
-custom_imports = dict(imports=['..configs._ours_.my_pipeline'], allow_failed_imports=False)
+custom_imports = dict(imports=['configs._ours_.my_pipeline'], allow_failed_imports=False)
 
 
 model = dict(

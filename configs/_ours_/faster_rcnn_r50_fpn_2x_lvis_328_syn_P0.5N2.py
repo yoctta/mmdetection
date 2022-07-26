@@ -3,7 +3,6 @@ _base_ = [
     '../_ours_/lvis_v1_longtail_328.py',
     '../_base_/schedules/schedule_2x.py', '../_base_/default_runtime.py'
 ]
-from sklearn.preprocessing import scale
 from mmdet.datasets.builder import PIPELINES
 import json 
 import cv2

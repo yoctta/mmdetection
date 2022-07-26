@@ -57,7 +57,10 @@ class In_N_Out:
             if lab==cls:
                 scales.append(max(bbox[3]-bbox[1],bbox[2]-bbox[0]))
         scale=np.mean(scales)*np.random.uniform(*self.scale_p)
-        RGB,alpha=self.load_RGBA_BB(sub_img,float(scale))
+        try:
+            RGB,alpha=self.load_RGBA_BB(sub_img,float(scale))
+        except:
+            return 0
         ph,pw=RGB.shape[:2]
         dy=img_h-ph
         dx=img_w-pw

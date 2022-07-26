@@ -728,6 +728,9 @@ class LVISV1Dataset(LVISDataset):
             )
         self.coco = LVIS(ann_file)
         self.cat_ids = self.coco.get_cat_ids()
+        print(self.cat_ids)
+        print("----------------------------")
+        print(self.CLASSES)
         self.cat2label = {cat_id: i for i, cat_id in enumerate(self.cat_ids)}
         self.img_ids = self.coco.get_img_ids()
         data_infos = []

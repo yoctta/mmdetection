@@ -13,6 +13,7 @@ data = dict(
         _delete_=True,
         type='ClassBalancedDataset',
         oversample_thr=1e-3,
+        classes=classes,
         dataset=dict(
             classes=classes,
             type=dataset_type,

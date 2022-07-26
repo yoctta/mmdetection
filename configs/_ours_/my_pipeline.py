@@ -2,6 +2,7 @@ from mmdet.datasets.builder import PIPELINES
 import json 
 import cv2
 import numpy as np
+import os
 from random import sample
 with open('/mnt/home/syn4det/GLIDE/LVIS_gen_FG/results.json') as f:
     classes = json.load(f)
@@ -29,7 +30,6 @@ class In_N_Out:
         self.scale_p=scale_p
         self.care_overlap=care_overlap
         self.mask_threshold=mask_threshold
-
 
     def load_RGBA_BB(self,file_path,size):
         img_RGBA=cv2.imread(file_path,cv2.IMREAD_UNCHANGED)

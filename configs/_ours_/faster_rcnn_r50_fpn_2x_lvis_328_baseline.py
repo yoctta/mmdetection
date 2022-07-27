@@ -3,6 +3,15 @@ _base_ = [
     '../_ours_/lvis_v1_longtail_328.py',
     '../_base_/schedules/schedule_2x.py', '../_base_/default_runtime.py'
 ]
+import json
+with open('/mnt/home/syn4det/LVIS_gen_FG/results.json') as f:
+    classes = json.load(f)
+    classes= [i['name'] for i in classes]
+
+with open('/mnt/data/LVIS/id_map.json') as f:
+    id_map_f=json.load(f)
+cat2label = {i:id_map_f[cat_id] for i, cat_id in enumerate(classes)}
+
 model = dict(
     roi_head=dict(
         bbox_head=dict(num_classes=328)),
@@ -29,5 +38,5 @@ train_pipeline = [
     dict(type='Collect', keys=['img', 'gt_bboxes', 'gt_labels']),
 ]
 data = dict(train=dict(dataset=dict(pipeline=train_pipeline)))
-evaluation = dict(classwise=True,jsonfile_prefix="_debug_")
+evaluation = dict(classwise=True,remap_cat_id=cat2label)
 load_from = 'https://download.openmmlab.com/mmdetection/v2.0/faster_rcnn/faster_rcnn_r50_fpn_2x_coco/faster_rcnn_r50_fpn_2x_coco_bbox_mAP-0.384_20200504_210434-a5d8aa15.pth'

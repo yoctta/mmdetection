@@ -316,7 +316,8 @@ class LVISV05Dataset(CocoDataset):
                  jsonfile_prefix=None,
                  classwise=False,
                  proposal_nums=(100, 300, 1000),
-                 iou_thrs=np.arange(0.5, 0.96, 0.05)):
+                 iou_thrs=np.arange(0.5, 0.96, 0.05),
+                 remap_cat_id=None):
         """Evaluation in LVIS protocol.
 
         Args:
@@ -337,7 +338,9 @@ class LVISV05Dataset(CocoDataset):
         Returns:
             dict[str, float]: LVIS style metrics.
         """
-
+        if remap_cat_id:
+            for i in results:
+                i['category_id']=remap_cat_id(i['category_id'])
         try:
             import lvis
             if getattr(lvis, '__version__', '0') >= '10.5.3':
@@ -420,7 +423,6 @@ class LVISV05Dataset(CocoDataset):
                     # Compute per-category AP
                     # from https://github.com/facebookresearch/detectron2/
                     precisions = lvis_eval.eval['precision']
-                    print(precisions.shape)
                     # precision: (iou, recall, cls, area range, max dets)
                     assert len(self.cat_ids) == precisions.shape[2]
 

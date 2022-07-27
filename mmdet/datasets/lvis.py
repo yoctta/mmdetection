@@ -399,9 +399,6 @@ class LVISV05Dataset(CocoDataset):
                 break
 
             iou_type = 'bbox' if metric == 'proposal' else metric
-            print(lvis_gt)
-            print('----')
-            print(lvis_dt)
             lvis_eval = LVISEval(lvis_gt, lvis_dt, iou_type)
             lvis_eval.params.imgIds = self.img_ids
             if metric == 'proposal':
@@ -423,7 +420,7 @@ class LVISV05Dataset(CocoDataset):
                     # Compute per-category AP
                     # from https://github.com/facebookresearch/detectron2/
                     precisions = lvis_eval.eval['precision']
-                    print(precisions)
+                    print(precisions.shape)
                     # precision: (iou, recall, cls, area range, max dets)
                     assert len(self.cat_ids) == precisions.shape[2]
 

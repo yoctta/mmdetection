@@ -339,11 +339,7 @@ class LVISV05Dataset(CocoDataset):
             dict[str, float]: LVIS style metrics.
         """
         if remap_cat_id:
-            import pickle
-            with open('_debug_results.pkl','wb') as f:
-                pickle.dump(results,f)
-            for i in results[0]:
-                i['category_id']=remap_cat_id(i['category_id'])
+            results=[[np.array([],dtype='float32') if remap_cat_id[i1]==-1 else results[i2][remap_cat_id[i1]] for i1 in range(len(remap_cat_id))] for i2 in range(len(results))]
         try:
             import lvis
             if getattr(lvis, '__version__', '0') >= '10.5.3':

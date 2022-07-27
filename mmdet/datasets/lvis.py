@@ -339,6 +339,7 @@ class LVISV05Dataset(CocoDataset):
             dict[str, float]: LVIS style metrics.
         """
         if remap_cat_id:
+            print(results[0])
             for i in results[0]:
                 i['category_id']=remap_cat_id(i['category_id'])
         try:

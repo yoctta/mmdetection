@@ -339,7 +339,9 @@ class LVISV05Dataset(CocoDataset):
             dict[str, float]: LVIS style metrics.
         """
         if remap_cat_id:
-            print(results[0])
+            import pickle
+            with open('_debug_results.pkl','wb') as f:
+                pickle.dump(results,f)
             for i in results[0]:
                 i['category_id']=remap_cat_id(i['category_id'])
         try:

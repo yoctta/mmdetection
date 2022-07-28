@@ -427,6 +427,8 @@ class LVISV05Dataset(CocoDataset):
 
                     results_per_category = []
                     for idx, catId in enumerate(self.cat_ids):
+                        if remap_cat_id and remap_cat_id[idx]==-1:
+                            continue
                         # area range index 0: all area ranges
                         # max dets index -1: typically 100 per image
                         # the dimensions of precisions are

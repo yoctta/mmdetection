@@ -4,14 +4,10 @@ import cv2
 import numpy as np
 import os
 from random import sample
-with open('/mnt/home/syn4det/LVIS_gen_FG/results.json') as f:
-    classes = json.load(f)
-    classes= [i['name'] for i in classes]
 
 with open('/mnt/data/LVIS/id_map.json') as f:
     id_map_f=json.load(f)
-cat2label = {id_map_f[cat_id]: i for i, cat_id in enumerate(classes)}
-label2cat = {i:cat_id for i, cat_id in enumerate(classes)}
+label2cat = {id_map_f[cat]-1:cat for  cat in id_map_f}
 
 def intersection(s1,s2):
     area2=(s2[3]-s2[1])*(s2[2]-s2[0])
@@ -49,7 +45,7 @@ class In_N_Out:
     def try_add_syn(self,img,bboxes,labels,cls,care_overlap):
         catego=label2cat[cls]
         img_h,img_w=img.shape[:2]
-        if len(self.subs_dict[catego])==0:
+        if catego not in self.subs_dict or len(self.subs_dict[catego])==0:
             return 0
         sub_img=sample(self.subs_dict[catego],1)[0]
         scales=[]

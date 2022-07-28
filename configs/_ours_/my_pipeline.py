@@ -42,7 +42,7 @@ class In_N_Out:
         alpha=cv2.resize(alpha[y_min:y_max,x_min:x_max],(round(new_H),round(new_W)))/255
         return RGB,alpha
 
-    def try_add_syn(self,img,bboxes,labels,cls,care_overlap):
+    def try_add_syn(self,img,bboxes,labels,masks,cls,care_overlap):
         catego=label2cat[cls]
         img_h,img_w=img.shape[:2]
         if catego not in self.subs_dict or len(self.subs_dict[catego])==0:
@@ -70,6 +70,9 @@ class In_N_Out:
                     return 0
         labels.append(cls)
         bboxes.append([dx,dy,dx+pw,dy+ph])
+        _mask=np.zeros([img_h,img_w])
+        _mask[dy:dy+ph,dx:dx+pw]=alpha
+        masks.append((_mask>self.mask_threshold/255).astype('uint8'))
         img[dy:dy+ph,dx:dx+pw]=img[dy:dy+ph,dx:dx+pw]*(1-alpha[...,None])+RGB*alpha[...,None]
         return 1 
 
@@ -77,14 +80,16 @@ class In_N_Out:
         img=results['img']
         bboxes=results['gt_bboxes'].tolist()
         labels=results['gt_labels'].tolist()
+        masks=[i for i in results['gt_masks'].masks]
         label_set=set(labels)
         assert len(labels)==len(bboxes)
         N = min(self.N,len(label_set))
         for i in sample(label_set,N):
             if np.random.rand()<=self.P:
                 for _ in range(3):
-                    if self.try_add_syn(img,bboxes,labels,i,self.care_overlap):
+                    if self.try_add_syn(img,bboxes,labels,masks,i,self.care_overlap):
                         break
         results['gt_bboxes']=np.array(bboxes,dtype='float32')
         results['gt_labels']=np.array(labels)
+        results['gt_masks'].masks=np.stack(masks,0)
         return results

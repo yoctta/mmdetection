@@ -466,6 +466,8 @@ class LVISV05Dataset(CocoDataset):
                     for k, v in lvis_results.items() if k.startswith('AP')
                 ])
                 eval_results['{}_mAP_copypaste'.format(metric)] = ap_summary
+                if classwise:
+                    eval_results['classwise_mAP']=results_per_category
             lvis_eval.print_results()
         if tmp_dir is not None:
             tmp_dir.cleanup()

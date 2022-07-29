@@ -20,7 +20,8 @@ def intersection(s1,s2):
 
 @PIPELINES.register_module()
 class In_N_Out:
-    def __init__(self,subs_file='/mnt/home/syn4det/LVIS_l20_328_s28_subs.json',P=0.5,N=1,scale_p=[0.2,2],care_overlap=True,mask_threshold=128):
+    def __init__(self,subs_file='/mnt/home/syn4det/LVIS_l20_328_s28_subs.json',P=0.5,N=1,scale_p=[0.2,2],care_overlap=True,mask_threshold=128,care_cat=True):
+        self.care_cat=care_cat
         with open(subs_file) as f:
             self.subs_dict=json.load(f)        
         self.P=P
@@ -81,16 +82,22 @@ class In_N_Out:
         bboxes=results['gt_bboxes'].tolist()
         labels=results['gt_labels'].tolist()
         masks=[i for i in results['gt_masks'].masks]
-        label_set=set(labels)
-        assert len(labels)==len(bboxes)
-        N = min(self.N,len(label_set))
-        for i in sample(label_set,N):
+        if self.care_cat:
+            label_set=set(labels)
+            assert len(labels)==len(bboxes)
+            N = min(self.N,len(label_set))
+            sample_labels=sample(label_set,N)
+        else:
+            sample_labels=sample(list(label2cat),N)
+        for i in sample_labels:
             if np.random.rand()<=self.P:
                 for _ in range(3):
                     if self.try_add_syn(img,bboxes,labels,masks,i,self.care_overlap):
                         break
-        results['gt_bboxes']=np.array(bboxes,dtype='float32')
-        results['gt_labels']=np.array(labels)
+        if len(bboxes)>0:
+            results['gt_bboxes']=np.array(bboxes,dtype='float32')
+        if len(labels)>0:
+            results['gt_labels']=np.array(labels)
         if len(masks)>0:
             results['gt_masks'].masks=np.stack(masks,0)
         return results

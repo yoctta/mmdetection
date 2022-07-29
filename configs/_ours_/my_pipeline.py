@@ -91,5 +91,6 @@ class In_N_Out:
                         break
         results['gt_bboxes']=np.array(bboxes,dtype='float32')
         results['gt_labels']=np.array(labels)
-        results['gt_masks'].masks=np.stack(masks,0)
+        if len(masks)>0:
+            results['gt_masks'].masks=np.stack(masks,0)
         return results

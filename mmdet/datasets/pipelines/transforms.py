@@ -2905,6 +2905,7 @@ class CopyPaste:
         return dst_results
 
     def get_updated_masks(self, masks, composed_mask):
+        print(masks.masks.shape,composed_mask.shape[-2:])
         assert masks.masks.shape[-2:] == composed_mask.shape[-2:], \
             'Cannot compare two arrays of different size'
         masks.masks = np.where(composed_mask, 0, masks.masks)

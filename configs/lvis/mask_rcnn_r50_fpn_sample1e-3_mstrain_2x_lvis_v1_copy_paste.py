@@ -24,6 +24,7 @@ train_pipeline = [
 train_dataset = dict(
     type='MultiImageMixDataset',
     dataset=dict(
+        _delete_=True,
         type='ClassBalancedDataset',
         oversample_thr=1e-3,
         dataset=dict(
